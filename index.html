@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Quick Note & Checklist</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #131c31;
+      --border: #24324d;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Pyidaungsu", "Noto Sans Myanmar", sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .brand p {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      background: #090e1a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #041318;
+      white-space: nowrap;
+    }
+
+    .btn-secondary {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+      flex: 1;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .todo-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #090e1a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .todo-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .todo-left input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    .todo-text {
+      font-size: 0.92rem;
+      word-break: break-word;
+    }
+
+    .todo-text.done {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .del-btn {
+      background: transparent;
+      color: var(--danger);
+      padding: 4px 8px;
+      font-size: 0.85rem;
+    }
+
+    .status-bar {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>Quick Note & Checklist</h1>
+        <p>Offline မှတ်စု နှင့် လုပ်စရာ စာရင်း</p>
+      </div>
+      <span class="badge">Offline Saved</span>
+    </header>
+
+    <div class="card">
+      <div class="section-title">
+        <span>၁။ အမြန် မှတ်စု (Quick Note)</span>
+        <span id="noteCount">0 လုံး</span>
+      </div>
+      <textarea id="noteArea" placeholder="ဒီနေရာမှာ မှတ်စုတွေ ရေးထားနိုင်ပါတယ်... အလိုအလျောက် သိမ်းပေးပါမယ်။"></textarea>
+      <div class="actions">
+        <button class="btn-secondary" onclick="copyNote()">Copy ကူးမယ်</button>
+        <button class="btn-danger" onclick="clearNote()">မှတ်စု ရှင်းမယ်</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>၂။ လုပ်စရာ စာရင်း (Checklist)</span>
+        <span id="taskStats">0 / 0 ပြီးစီး</span>
+      </div>
+      <div class="row">
+        <input type="text" id="taskInput" placeholder="လုပ်စရာ တစ်ခု ထည့်ပါ..." onkeydown="if(event.key==='Enter') addTask()" />
+        <button class="btn-primary" onclick="addTask()">+ ထည့်မယ်</button>
+      </div>
+      <ul class="todo-list" id="todoList"></ul>
+      <div class="status-bar" id="statusBar">Browser ထဲမှာ အလိုအလျောက် သိမ်းဆည်းထားပါသည်</div>
+    </div>
+  </div>
+
+  <script>
+    const noteArea = document.getElementById("noteArea");
+    const noteCount = document.getElementById("noteCount");
+    const taskInput = document.getElementById("taskInput");
+    const todoList = document.getElementById("todoList");
+    const taskStats = document.getElementById("taskStats");
+    const statusBar = document.getElementById("statusBar");
+
+    const NOTE_KEY = "quick_note_v1";
+    const TASKS_KEY = "quick_tasks_v1";
+
+    noteArea.value = localStorage.getItem(NOTE_KEY) || "";
+    updateNoteCount();
+
+    noteArea.addEventListener("input", () => {
+      localStorage.setItem(NOTE_KEY, noteArea.value);
+      updateNoteCount();
+      statusBar.textContent = "မှတ်စု သိမ်းဆည်းပြီးပါပြီ";
+    });
+
+    function updateNoteCount() {
+      noteCount.textContent = noteArea.value.length + " လုံး";
+    }
+
+    function copyNote() {
+      if (!noteArea.value.trim()) return;
+      navigator.clipboard.writeText(noteArea.value);
+      statusBar.textContent = "မှတ်စု Copy ကူးပြီးပါပြီ";
+    }
+
+    function clearNote() {
+      noteArea.value = "";
+      localStorage.removeItem(NOTE_KEY);
+      updateNoteCount();
+      statusBar.textContent = "မှတ်စု ရှင်းလင်းပြီးပါပြီ";
+    }
+
+    let tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || "[]");
+
+    function saveTasks() {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (!text) return;
+      tasks.unshift({ id: Date.now(), text, done: false });
+      taskInput.value = "";
+      saveTasks();
+      statusBar.textContent = "စာရင်းထဲ ထည့်ပြီးပါပြီ";
+    }
+
+    function toggleTask(id) {
+      tasks = tasks.map(t => (t.id === id ? { ...t, done: !t.done } : t));
+      saveTasks();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      statusBar.textContent = "ဖျက်ပြီးပါပြီ";
+    }
+
+    function renderTasks() {
+      todoList.innerHTML = "";
+      const doneCount = tasks.filter(t => t.done).length;
+      taskStats.textContent = `${doneCount} / ${tasks.length} ပြီးစီး`;
+
+      tasks.forEach(t => {
+        const li = document.createElement("li");
+        li.className = "todo-item";
+
+        const left = document.createElement("div");
+        left.className = "todo-left";
+        left.onclick = () => toggleTask(t.id);
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = t.done;
+        cb.onclick = e => e.stopPropagation();
+        cb.onchange = () => toggleTask(t.id);
+
+        const span = document.createElement("span");
+        span.className = "todo-text" + (t.done ? " done" : "");
+        span.textContent = t.text;
+
+        left.appendChild(cb);
+        left.appendChild(span);
+
+        const del = document.createElement("button");
+        del.className = "del-btn";
+        del.textContent = "✕";
+        del.onclick = () => deleteTask(t.id);
+
+        li.appendChild(left);
+        li.appendChild(del);
+        todoList.appendChild(li);
+      });
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
